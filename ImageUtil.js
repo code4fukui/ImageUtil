@@ -1,4 +1,4 @@
-import { parseSize } from "https://js.sabe.cc/parseSize.js";
+import { parseSize } from "https://js.sabae.cc/parseSize.js";
 
 const imgutil = {};
 
