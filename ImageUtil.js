@@ -20,12 +20,12 @@ imgutil.getArrayBufferFromBlob = async (blob) =>
     r.readAsArrayBuffer(blob);
   });
 
-imgutil.getArrayBufferFromImage = async (img, mimeType, quality) => { // default image/png
+imgutil.getArrayBufferFromImage = async (img, mimeType, quality, colorSpace = "srgb") => { // default image/png
   const canvas = document.createElement("canvas");
   const [iw, ih] = [img.orgwidth || img.width, img.orgheight || img.height];
   canvas.width = iw;
   canvas.height = ih;
-  const g = canvas.getContext("2d");
+  const g = canvas.getContext("2d", { colorSpace });
   g.fillStyle = "#ffffff";
   g.fillRect(0, 0, iw, ih);
   g.drawImage(img, 0, 0, iw, ih, 0, 0, iw, ih);
@@ -44,7 +44,7 @@ imgutil.getImageFromArrayBuffer = async (bin) => {
   return img;
 };
 
-imgutil.resizeImage = async (img, mimeType, maxw) => {
+imgutil.resizeImage = async (img, mimeType, maxw, colorSpace = "srgb") => {
   const iw = img.width;
   const ih = img.height;
   if (Math.max(iw, ih) < maxw) {
@@ -54,7 +54,7 @@ imgutil.resizeImage = async (img, mimeType, maxw) => {
   const canvas = document.createElement("canvas");
   canvas.width = dw;
   canvas.height = dh;
-  const g = canvas.getContext("2d");
+  const g = canvas.getContext("2d", { colorSpace });
   g.drawImage(img, 0, 0, iw, ih, 0, 0, dw, dh);
   const dataurl = canvas.toDataURL(mimeType);
   const img2 = new Image();
