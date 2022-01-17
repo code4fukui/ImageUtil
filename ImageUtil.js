@@ -87,6 +87,47 @@ imgutil.getResized = (w, h, min) => {
   }
 };
 
+ImageUtil.isJPEG = (bin) => {
+  return bin && bin.length > 0 && bin[0] == 0xff;
+};
+const binStartsWith = (bin, header) => {
+  if (!bin || bin.length < header.length) {
+    return false;
+  }
+  for (let i = 0; i < header.length; i++) {
+    if (bin[i] != header[i]) {
+      return false;
+    }
+  }
+  return true;
+};
+ImageUtil.isPNG = (bin) => {
+  const header = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+  return binStartsWith(bin, header);
+}
+ImageUtil.isSVG = (bin) => {
+  const header = new TextEncoder().encode("<svg ");
+  return binStartsWith(bin, header);
+}
+ImageUtil.getImageExtension = (bin) => {
+  if (ImageUtil.isJPEG(bin)) {
+    return "jpg";
+  } else if (ImageUtil.isPNG(bin)) {
+    return "png";
+  } else if (ImageUtil.isSVG(bin)) {
+    return "svg";
+  }
+  return null;
+};
+/*
+ImageUtil.parseSize = (bin) => {
+
+};
+ImageUtil.parseSizePNG = (bin) => {
+
+};
+*/
+
 const ImageUtil = imgutil;
 
 export { ImageUtil };
