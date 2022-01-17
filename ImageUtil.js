@@ -1,26 +1,26 @@
 import { parseSize } from "https://js.sabae.cc/parseSize.js";
 
-const imgutil = {};
+const ImageUtil = {};
 
-imgutil.waitLoad = async (img) => {
+ImageUtil.waitLoad = async (img) => {
   return new Promise((resolve, reject) => {
     img.onload = () => resolve(img);
     img.onerror = () => reject();
   });
 };
 
-imgutil.getBlobFromCanvas = async (canvas, mimetype, quality) =>
+ImageUtil.getBlobFromCanvas = async (canvas, mimetype, quality) =>
   // defalut image/png
   new Promise((res) => canvas.toBlob((blob) => res(blob), mimetype, quality));
 
-imgutil.getArrayBufferFromBlob = async (blob) =>
+ImageUtil.getArrayBufferFromBlob = async (blob) =>
   new Promise((res) => {
     const r = new FileReader();
     r.addEventListener("loadend", () => res(r.result));
     r.readAsArrayBuffer(blob);
   });
 
-imgutil.getArrayBufferFromImage = async (img, mimeType, quality, colorSpace = "srgb") => { // default image/png
+ImageUtil.getArrayBufferFromImage = async (img, mimeType, quality, colorSpace = "srgb") => { // default image/png
   const canvas = document.createElement("canvas");
   const [iw, ih] = [img.orgwidth || img.width, img.orgheight || img.height];
   canvas.width = iw;
@@ -29,22 +29,22 @@ imgutil.getArrayBufferFromImage = async (img, mimeType, quality, colorSpace = "s
   g.fillStyle = "#ffffff";
   g.fillRect(0, 0, iw, ih);
   g.drawImage(img, 0, 0, iw, ih, 0, 0, iw, ih);
-  const blob = await imgutil.getBlobFromCanvas(canvas, mimeType, quality);
-  const bin = await imgutil.getArrayBufferFromBlob(blob);
+  const blob = await ImageUtil.getBlobFromCanvas(canvas, mimeType, quality);
+  const bin = await ImageUtil.getArrayBufferFromBlob(blob);
   return bin;
 };
 
-imgutil.getImageFromArrayBuffer = async (bin) => {
+ImageUtil.getImageFromArrayBuffer = async (bin) => {
   const blob = new Blob([bin], { type: "image/jpeg" });
   const urlCreator = window.URL || window.webkitURL;
   const url = urlCreator.createObjectURL(blob);
   const img = new Image();
   img.src = url;
-  await imgutil.waitLoad(img);
+  await ImageUtil.waitLoad(img);
   return img;
 };
 
-imgutil.resizeImage = async (img, mimeType, maxw, colorSpace = "srgb") => {
+ImageUtil.resizeImage = async (img, mimeType, maxw, colorSpace = "srgb") => {
   const iw = img.width;
   const ih = img.height;
   if (Math.max(iw, ih) < maxw) {
@@ -59,27 +59,27 @@ imgutil.resizeImage = async (img, mimeType, maxw, colorSpace = "srgb") => {
   const dataurl = canvas.toDataURL(mimeType);
   const img2 = new Image();
   img2.src = dataurl;
-  await imgutil.waitLoad(img2);
+  await ImageUtil.waitLoad(img2);
   return img2;
 };
 
-imgutil.loadResized = async (file, maxw, maxsize) => {
+ImageUtil.loadResized = async (file, maxw, maxsize) => {
   const img = new Image();
   img.src = URL.createObjectURL(file);
-  await imgutil.waitLoad(img);
+  await ImageUtil.waitLoad(img);
   if (file.type.indexOf("svg") >= 0 && file.size <= parseSize(maxsize)) {
     return img;
   }
-  return await imgutil.resizeImage(img, file.type, maxw);
+  return await ImageUtil.resizeImage(img, file.type, maxw);
 };
 
-imgutil.fetchImage = async (url) => {
+ImageUtil.fetchImage = async (url) => {
   const img = new Image();
   img.src = url;
   return await waitLoad(img);
 };
 
-imgutil.getResized = (w, h, min) => {
+ImageUtil.getResized = (w, h, min) => {
   if (w > h) {
       return { width: min, height: min * h / w };
   } else {
@@ -127,7 +127,5 @@ ImageUtil.parseSizePNG = (bin) => {
 
 };
 */
-
-const ImageUtil = imgutil;
 
 export { ImageUtil };
